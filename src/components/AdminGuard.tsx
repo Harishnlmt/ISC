@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/src/lib/supabase'
+// import { supabase } from '@/src/lib/supabase'
+import { getSupabaseClient } from "@/src/lib/supabase";
 import { useRouter } from 'next/navigation'
 
 export default function AdminGuard({
@@ -14,6 +15,7 @@ export default function AdminGuard({
 
   useEffect(() => {
     const checkSession = async () => {
+        const supabase = getSupabaseClient();
       const { data } = await supabase.auth.getSession()
       if (!data.session) {
         router.replace('/admin/login')

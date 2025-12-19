@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/src/lib/supabase'
 import { useParams, useRouter } from 'next/navigation'
-import AdminGuard from '@/src/components/AdminGuard'
 import { motion } from 'framer-motion'
+import AdminGuard from '@/src/components/AdminGuard'
+import { getSupabaseClient } from '@/src/lib/supabase'
 
 export default function TeamDetail() {
   const { id } = useParams()
@@ -17,17 +17,30 @@ export default function TeamDetail() {
   }, [])
 
   const loadData = async () => {
-    const { data: teamData } = await supabase
+    // ✅ Create supabase client INSIDE function
+    const supabase = getSupabaseClient()
+
+    const { data: teamData, error: teamError } = await supabase
       .from('teams')
       .select('*')
       .eq('id', id)
       .single()
 
-    const { data: playersData } = await supabase
+    if (teamError) {
+      console.error(teamError)
+      return
+    }
+
+    const { data: playersData, error: playersError } = await supabase
       .from('players')
       .select('*')
       .eq('team_id', id)
       .order('jersey_number', { ascending: true })
+
+    if (playersError) {
+      console.error(playersError)
+      return
+    }
 
     setTeam(teamData)
     setPlayers(playersData || [])
@@ -43,11 +56,11 @@ export default function TeamDetail() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl mx-auto bg-white rounded-3xl p-6 shadow-2xl"
         >
-
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <img
               src={team.logo_url}
+              alt={team.team_name}
               className="w-24 h-24 rounded-2xl object-cover border"
             />
 
@@ -57,11 +70,13 @@ export default function TeamDetail() {
               </h1>
 
               <p className="text-gray-600 text-sm">
-                👤 Manager: <span className="font-semibold">{team.manager_name}</span>
+                👤 Manager:{' '}
+                <span className="font-semibold">{team.manager_name}</span>
               </p>
 
               <p className="text-gray-600 text-sm">
-                📞 Phone: <span className="font-semibold">{team.manager_phone}</span>
+                📞 Phone:{' '}
+                <span className="font-semibold">{team.manager_phone}</span>
               </p>
 
               <span
