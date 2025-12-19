@@ -167,10 +167,16 @@ export default function RegisterPage() {
       </AnimatePresence>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-xl rounded-3xl shadow-2xl p-6"
-      >
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  className="relative bg-white w-full max-w-xl rounded-3xl shadow-2xl p-6"
+>
+  {/* Club Logo – top left */}
+  <img
+    src="/image/logo.jpeg"
+    alt="Ithalar Sports Club"
+    className="absolute top-4 left-4 w-17 h-17 rounded-full border"
+  />
         <h1 className="text-3xl font-extrabold text-center text-gray-900">
           ITHALAR SPORTS CLUB
         </h1>
@@ -237,7 +243,7 @@ export default function RegisterPage() {
 
         {/* 🏃 Players */}
         <h2 className="font-bold text-gray-900 mt-6 mb-2">
-          Players ({players.length}/15)
+          Players  min(11) ({players.length}/15)
         </h2>
 
         {errors.players && (
@@ -305,7 +311,7 @@ export default function RegisterPage() {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleSubmit}
-          disabled={loading}
+          disabled={players.length < 5 || loading}
           className="w-full mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white py-3 rounded-2xl font-bold shadow-lg"
         >
           {loading ? 'Submitting...' : '🚀 Submit Registration'}
